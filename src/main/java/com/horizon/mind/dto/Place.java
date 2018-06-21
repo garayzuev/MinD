@@ -20,8 +20,7 @@ public class Place {
     private final String name;
 
     @JsonProperty
-    //private byte[] image;
-    private final String image;
+    private final byte[] image;
 
     @JsonProperty
     private final Double latitude;

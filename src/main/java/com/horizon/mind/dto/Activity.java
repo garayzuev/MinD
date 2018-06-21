@@ -21,7 +21,7 @@ public class Activity {
     private final String name;
 
     @JsonProperty(required = true)
-    private final String image;
+    private final byte[] image;
 
     @JsonProperty
     List<Place> preferredPlaces;
