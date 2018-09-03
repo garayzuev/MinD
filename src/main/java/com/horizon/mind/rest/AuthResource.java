@@ -23,10 +23,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.github.scribejava.core.model.Verb.GET;
 
@@ -49,8 +48,12 @@ public class AuthResource {
     private Map<String, OAuth20Service> servicesByName;
     private ObjectMapper mapper = new ObjectMapper();
 
+    private final DataBaseService dataBase;
+
     @Autowired
-    private DataBaseService dataBase;
+    public AuthResource(DataBaseService dataBase) {
+        this.dataBase = dataBase;
+    }
 
     @PostConstruct
     public void init() {
@@ -71,7 +74,7 @@ public class AuthResource {
 
         return ResponseEntity
                 .status(HttpStatus.TEMPORARY_REDIRECT)
-                .location(URI.create(authService.getAuthorizationUrl() + "&state=facebook"))
+                .location(URI.create(authService.getAuthorizationUrl() + "&state=facebook&scope=email,user_friends"))
                 .build();
     }
 
@@ -97,8 +100,8 @@ public class AuthResource {
 
         return ResponseEntity
                 .status(HttpStatus.TEMPORARY_REDIRECT)
-                .location(URI.create("localhost:8080/user/" + Long.toString(id)))
-                .header("Set-Cookie", "user=" + Long.toString(id) + "; Max-Age=63072000; Domain=localhost; Secure; HttpOnly; Path=/")
+                .location(URI.create("/user/"))
+                .header("Set-Cookie", "user=" + Long.toString(id) + "; Max-Age=63072000; Domain=localhost; HttpOnly; Path=/")
                 .build();
     }
 
@@ -115,7 +118,22 @@ public class AuthResource {
 
         response = executeRequest(token, service, fbUrl + id + "/picture?type=large", GET);
         byte[] image = IOUtils.toByteArray(response.getStream());
-        return userBuilder.image(image).build();
+        return userBuilder.image(image).friends(getFriends(token, service, id)).build();
+    }
+
+    @SneakyThrows
+    private List<User> getFriends(OAuth2AccessToken token, OAuth20Service service, String id) {
+        Response response = executeRequest(token, service, fbUrl + id + "/friends", GET);
+        String body = IOUtils.toString(response.getStream(), Charset.defaultCharset());
+        JsonNode json = mapper.readTree(body);
+
+        return StreamSupport.stream(json.get("data").spliterator(), true)
+                .map(j -> j.get("id"))
+                .map(JsonNode::asText)
+                .map(dataBase::getUserByForeignId)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 
     @SneakyThrows

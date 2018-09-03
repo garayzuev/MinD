@@ -3,16 +3,14 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.2.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.4.RELEASE")
     }
 }
 
-plugins {
-    id 'java'
-    id 'idea'
-    id 'org.springframework.boot' version "2.0.3.RELEASE"
-    id 'io.spring.dependency-management' version "1.0.5.RELEASE"
-}
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
 
 group 'com.horizon'
 version '1.0-SNAPSHOT'

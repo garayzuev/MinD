@@ -20,7 +20,9 @@ public class MockDataBaseService implements DataBaseService {
     @Override
     public long addUser(User data) {
         long id = data.hashCode();
-        users.put(id, data.toBuilder().id(id).build());
+        User user = data.toBuilder().id(id).build();
+        user.getFriends().parallelStream().map(User::getId).forEach(fid -> users.get(fid).getFriends().add(user));
+        users.put(id, user);
         return id;
     }
 

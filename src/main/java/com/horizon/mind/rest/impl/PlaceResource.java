@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 /**
@@ -24,6 +25,7 @@ public class PlaceResource implements RestResource<Place> {
     }
 
     @Override
+    @ResponseStatus(CREATED)
     @PostMapping(consumes = APPLICATION_JSON_UTF8_VALUE)
     public void add(@RequestBody Place place) {
         service.addPlace(place);

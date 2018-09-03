@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
 
@@ -25,6 +26,7 @@ public class UserResource implements RestResource<User> {
     }
 
     @Override
+    @ResponseStatus(CREATED)
     @PostMapping(consumes = APPLICATION_JSON_UTF8_VALUE)
     public void add(@RequestBody User user) {
         service.addUser(user);
@@ -41,6 +43,12 @@ public class UserResource implements RestResource<User> {
     @ResponseBody
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON_UTF8_VALUE)
     public User getById(@PathVariable("id") long id) {
+        return service.getUserById(id).orElse(null);
+    }
+
+    @ResponseBody
+    @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
+    public User getByCookie(@CookieValue("user") long id){
         return service.getUserById(id).orElse(null);
     }
 }
