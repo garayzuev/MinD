@@ -6,7 +6,7 @@ import com.horizon.mind.rest.RestResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Collection;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
@@ -25,16 +25,18 @@ public class PlaceResource implements RestResource<Place> {
     }
 
     @Override
+    @ResponseBody
     @ResponseStatus(CREATED)
     @PostMapping(consumes = APPLICATION_JSON_UTF8_VALUE)
-    public void add(@RequestBody Place place) {
-        service.addPlace(place);
+    public Place add(@RequestBody Place place) {
+        long id = service.addPlace(place);
+        return service.getPlaceById(id).orElseThrow(IllegalArgumentException::new);
     }
 
     @Override
     @ResponseBody
     @GetMapping(value = "/getAll", produces = APPLICATION_JSON_UTF8_VALUE)
-    public List<Place> getAll() {
+    public Collection<Place> getAll() {
         return service.getAllPlaces();
     }
 

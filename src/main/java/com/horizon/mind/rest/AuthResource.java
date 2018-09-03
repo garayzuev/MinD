@@ -122,7 +122,7 @@ public class AuthResource {
     }
 
     @SneakyThrows
-    private List<User> getFriends(OAuth2AccessToken token, OAuth20Service service, String id) {
+    private Set<User> getFriends(OAuth2AccessToken token, OAuth20Service service, String id) {
         Response response = executeRequest(token, service, fbUrl + id + "/friends", GET);
         String body = IOUtils.toString(response.getStream(), Charset.defaultCharset());
         JsonNode json = mapper.readTree(body);
@@ -133,7 +133,7 @@ public class AuthResource {
                 .map(dataBase::getUserByForeignId)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     @SneakyThrows
