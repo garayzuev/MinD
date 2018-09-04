@@ -1,8 +1,8 @@
 package com.horizon.mind.rest;
 
-import com.github.scribejava.core.model.OAuth2AccessToken;
+import com.github.scribejava.core.model.Token;
 import com.horizon.mind.dto.User;
-import com.horizon.mind.service.auth.OAuthService;
+import com.horizon.mind.service.auth.IOAuthService;
 import com.horizon.mind.service.db.DataBaseService;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,17 +24,17 @@ import java.util.stream.Collectors;
 public class AuthResource {
 
     private final DataBaseService dataBase;
-    private final Map<String, OAuthService> servicesByName;
+    private final Map<String, IOAuthService> servicesByName;
 
     @Autowired
-    public AuthResource(DataBaseService dataBase, OAuthService... services) {
+    public AuthResource(DataBaseService dataBase, IOAuthService... services) {
         this.dataBase = dataBase;
-        servicesByName = Arrays.stream(services).collect(Collectors.toMap(OAuthService::getServiceName, s -> s));
+        servicesByName = Arrays.stream(services).collect(Collectors.toMap(IOAuthService::getServiceName, s -> s));
     }
 
     @GetMapping("login/{service}")
     public ResponseEntity authenticate(@PathVariable String service) {
-        OAuthService authService = servicesByName.get(service);
+        IOAuthService authService = servicesByName.get(service);
         if (authService == null)
             return ResponseEntity.badRequest().build();
 
@@ -50,12 +50,12 @@ public class AuthResource {
             return ResponseEntity.badRequest().build();
         }
 
-        OAuthService authService = servicesByName.get(state);
+        IOAuthService authService = servicesByName.get(state);
         if (authService == null) {
             return ResponseEntity.badRequest().build();
         }
 
-        OAuth2AccessToken token = authService.getToken(code);
+        Token token = authService.getToken(code);
 
         String userId = authService.getUserId(token);
 

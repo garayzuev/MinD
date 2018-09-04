@@ -7,10 +7,10 @@ import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
-import com.github.scribejava.core.model.Verb;
+import com.github.scribejava.core.model.Token;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.horizon.mind.dto.User;
-import com.horizon.mind.service.auth.OAuthService;
+import com.horizon.mind.service.auth.IOAuthService;
 import com.horizon.mind.service.db.DataBaseService;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
@@ -28,7 +28,7 @@ import java.util.stream.StreamSupport;
 import static com.github.scribejava.core.model.Verb.GET;
 
 @Service
-public class FacebookAuthService implements OAuthService {
+public class FacebookAuthService implements IOAuthService {
     private static final String SERVICE_NAME = "facebook";
     private final OAuth20Service fbService;
     private final ObjectMapper mapper;
@@ -58,18 +58,27 @@ public class FacebookAuthService implements OAuthService {
     }
 
     @Override
-    @SneakyThrows
-    public OAuth2AccessToken getToken(String code) {
-        return fbService.getAccessToken(code);
-    }
-
-    @Override
     public URI getAuthorizationUrl() {
         return authorizationUrl;
     }
 
+    @Override
     @SneakyThrows
-    public User getUserById(OAuth2AccessToken token, String id) {
+    public Token getToken(String code) {
+        return fbService.getAccessToken(code);
+    }
+
+    @Override
+    @SneakyThrows
+    public void signRequest(Token token, OAuthRequest request) {
+        if (!(token instanceof OAuth2AccessToken))
+            throw new IllegalArgumentException("Bad format for token! Token should be an instanse of OAuth2Token");
+        fbService.signRequest((OAuth2AccessToken) token, request);
+    }
+
+    @Override
+    @SneakyThrows
+    public User getUserById(Token token, String id) {
         Response response = executeRequest(token, fbService, fbUrl + id + "?fields=email,first_name,last_name", GET);
         String body = IOUtils.toString(response.getStream(), Charset.defaultCharset());
         JsonNode json = mapper.readTree(body);
@@ -85,7 +94,7 @@ public class FacebookAuthService implements OAuthService {
     }
 
     @SneakyThrows
-    private Set<User> getFriends(OAuth2AccessToken token, String id) {
+    private Set<User> getFriends(Token token, String id) {
         Response response = executeRequest(token, fbService, fbUrl + id + "/friends", GET);
         String body = IOUtils.toString(response.getStream(), Charset.defaultCharset());
         JsonNode json = mapper.readTree(body);
@@ -99,19 +108,11 @@ public class FacebookAuthService implements OAuthService {
                 .collect(Collectors.toSet());
     }
 
+    @Override
     @SneakyThrows
-    public String getUserId(OAuth2AccessToken token) {
+    public String getUserId(Token token) {
         Response response = executeRequest(token, fbService, fbUrl + "me", GET);
         String body = IOUtils.toString(response.getStream(), Charset.defaultCharset());
         return mapper.readTree(body).get("id").asText();
     }
-
-    @SneakyThrows
-    private Response executeRequest(OAuth2AccessToken token, OAuth20Service service, String url, Verb method) {
-        OAuthRequest request = new OAuthRequest(method, url);
-        service.signRequest(token, request);
-        return service.execute(request);
-    }
-
-
 }
