@@ -69,4 +69,9 @@ public class MockDataBaseService implements DataBaseService {
     public List<Place> getAllPlaces() {
         return new ArrayList<>(places.values());
     }
+
+    @Override
+    public Optional<User> getUserByEmail(String email) {
+        return users.values().parallelStream().filter(u -> u.getEmail().equals(email)).findFirst();
+    }
 }

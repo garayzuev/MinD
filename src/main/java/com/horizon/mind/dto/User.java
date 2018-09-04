@@ -20,21 +20,26 @@ public class User {
     private final String foreignId;
     private final String name;
     private final String surname;
-    private final String email;
+    private String email;
     @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private final Set<User> friends;
+    @JsonIgnore
+    @ToString.Exclude
+    private String password;
     private final Set<Activity> preferredActivities;
     private byte[] image;
 
-    @ConstructorProperties({"id", "foreignId", "name", "surname", "email", "friends", "preferredActivities", "image"})
-    public User(Long id, String foreignId, String name, String surname, String email, Set<User> friends, Set<Activity> preferredActivities, byte[] image) {
+
+    @ConstructorProperties({"id", "foreignId", "name", "surname", "email", "friends", "password", "preferredActivities", "image"})
+    public User(Long id, String foreignId, String name, String surname, String email, Set<User> friends, String password, Set<Activity> preferredActivities, byte[] image) {
         this.id = id;
         this.foreignId = foreignId;
         this.name = name;
         this.surname = surname;
         this.email = email;
+        this.password = password;
         this.friends = friends == null ? new HashSet<>() : friends;
         this.preferredActivities = preferredActivities == null ? new HashSet<>() : preferredActivities;
         this.image = image;

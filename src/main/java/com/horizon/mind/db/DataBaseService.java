@@ -28,4 +28,6 @@ public interface DataBaseService {
     List<Activity> getAllActivities();
 
     List<Place> getAllPlaces();
+
+    Optional<User> getUserByEmail(String email);
 }

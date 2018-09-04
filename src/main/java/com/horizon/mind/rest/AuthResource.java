@@ -35,6 +35,9 @@ import static com.github.scribejava.core.model.Verb.GET;
 @RestController
 @RequestMapping("/auth")
 public class AuthResource {
+
+    private final DataBaseService dataBase;
+
     @Value("${auth.fb.url}")
     private String fbUrl;
     @Value("${auth.fb.key}")
@@ -47,8 +50,6 @@ public class AuthResource {
 
     private Map<String, OAuth20Service> servicesByName;
     private ObjectMapper mapper = new ObjectMapper();
-
-    private final DataBaseService dataBase;
 
     @Autowired
     public AuthResource(DataBaseService dataBase) {
@@ -80,7 +81,7 @@ public class AuthResource {
 
     @GetMapping("/login/")
     @SneakyThrows
-    public ResponseEntity login(@RequestParam String code, @RequestParam String state) {
+    public ResponseEntity loginByService(@RequestParam String code, @RequestParam String state) {
         if (Strings.isBlank(state)) {
             return ResponseEntity.badRequest().build();
         }
@@ -102,6 +103,24 @@ public class AuthResource {
                 .status(HttpStatus.TEMPORARY_REDIRECT)
                 .location(URI.create("/user/"))
                 .header("Set-Cookie", "user=" + Long.toString(id) + "; Max-Age=63072000; Domain=localhost; HttpOnly; Path=/")
+                .build();
+    }
+
+    @PostMapping("/login/")
+    public ResponseEntity loginByEmail(@RequestBody Map<String, String> map) {
+        String email = map.get("email");
+        String pass = map.get("password");
+        Optional<User> user = dataBase.getUserByEmail(email);
+        if (!user.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        if (!user.get().getPassword().equals(pass)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity
+                .status(HttpStatus.TEMPORARY_REDIRECT)
+                .location(URI.create("/user/"))
+                .header("Set-Cookie", "user=" + Long.toString(user.get().getId()) + "; Max-Age=63072000; Domain=localhost; HttpOnly; Path=/")
                 .build();
     }
 
