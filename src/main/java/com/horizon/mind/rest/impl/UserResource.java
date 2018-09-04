@@ -3,15 +3,17 @@ package com.horizon.mind.rest.impl;
 import com.horizon.mind.dto.Activity;
 import com.horizon.mind.dto.User;
 import com.horizon.mind.rest.RestResource;
+import com.horizon.mind.rest.exception.AccessDeniedException;
+import com.horizon.mind.rest.exception.UserNotFoundException;
 import com.horizon.mind.service.db.DataBaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import static com.horizon.mind.Helper.getCookie;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
@@ -40,7 +42,7 @@ public class UserResource implements RestResource<User> {
         User usr = add(user);
         return ResponseEntity
                 .status(CREATED)
-                .header("Set-Cookie", "user=" + Long.toString(usr.getId()) + "; Max-Age=63072000; Domain=localhost; HttpOnly; Path=/")
+                .headers(getCookie(usr.getId()))
                 .body(usr);
     }
 
@@ -55,19 +57,19 @@ public class UserResource implements RestResource<User> {
     @ResponseBody
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON_UTF8_VALUE)
     public User getById(@PathVariable long id) {
-        return service.getUserById(id).orElse(null);
+        return service.getUserById(id).orElseThrow(UserNotFoundException::new);
     }
 
     @ResponseBody
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
     public User getByCookie(@CookieValue("user") long id) {
-        return service.getUserById(id).orElse(null);
+        return service.getUserById(id).orElseThrow(UserNotFoundException::new);
     }
 
     @ResponseBody
     @PutMapping(value = "/friends/{friendId}")
     public User addFriendRelation(@CookieValue("user") long id, @PathVariable long friendId) {
-        User user = service.getUserById(id).orElseThrow(IllegalArgumentException::new);
+        User user = service.getUserById(id).orElseThrow(UserNotFoundException::new);
         service.getUserById(friendId).ifPresent(u -> {
             user.getFriends().add(u);
             u.getFriends().add(user);
@@ -78,13 +80,13 @@ public class UserResource implements RestResource<User> {
     @ResponseBody
     @GetMapping(value = "/friends", produces = APPLICATION_JSON_UTF8_VALUE)
     public Collection<User> getFriends(@CookieValue("user") long id) {
-        return service.getUserById(id).orElseThrow(IllegalArgumentException::new).getFriends();
+        return service.getUserById(id).orElseThrow(UserNotFoundException::new).getFriends();
     }
 
     @ResponseBody
     @PutMapping(value = "/activities/{activityId}")
     public User addFavoriteActivity(@CookieValue("user") long id, @PathVariable long activityId) {
-        User user = service.getUserById(id).orElseThrow(IllegalArgumentException::new);
+        User user = service.getUserById(id).orElseThrow(UserNotFoundException::new);
         Optional<Activity> activity = service.getActivityById(activityId);
         activity.ifPresent(a -> user.getPreferredActivities().add(a));
         return user;
@@ -93,14 +95,32 @@ public class UserResource implements RestResource<User> {
     @ResponseBody
     @GetMapping(value = "/activities")
     public Collection<Activity> getActivities(@CookieValue("user") long id) {
-        return service.getUserById(id).orElseThrow(IllegalArgumentException::new).getPreferredActivities();
+        return service.getUserById(id).orElseThrow(UserNotFoundException::new).getPreferredActivities();
     }
 
     @ResponseBody
     @PutMapping(value = "/image")
     public User uploadImage(@CookieValue("user") long id, @RequestBody byte[] image) {
-        User user = service.getUserById(id).orElseThrow(IllegalArgumentException::new);
+        User user = service.getUserById(id).orElseThrow(UserNotFoundException::new);
         user.setImage(image);
         return user;
+    }
+
+    @ResponseBody
+    @PutMapping(value = "/pass")
+    public User changePassword(@CookieValue("user") long id, @RequestBody Map<String, String> passwords) {
+        User user = service.getUserById(id).orElseThrow(UserNotFoundException::new);
+        String oldPass = passwords.get("oldPassword");
+        String newPass = passwords.get("newPassword");
+        if (!Objects.equals(user.getPassword(), oldPass)) {
+            throw new AccessDeniedException();
+        }
+        user.setPassword(newPass);
+        return user;
+    }
+
+    @ResponseStatus(value = BAD_REQUEST, reason = "Can't add a user")
+    @ExceptionHandler(IllegalArgumentException.class)
+    private void creatingProblemResolver() {
     }
 }

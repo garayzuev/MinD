@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.horizon.mind.Helper.getCookie;
 
 /**
  * Created by garayzuev@gmail.com on 19.06.2018.
@@ -66,7 +69,7 @@ public class AuthResource {
         return ResponseEntity
                 .status(HttpStatus.TEMPORARY_REDIRECT)
                 .location(URI.create("/user/"))
-                .header("Set-Cookie", "user=" + Long.toString(id) + "; Max-Age=63072000; Domain=localhost; HttpOnly; Path=/")
+                .headers(getCookie(id))
                 .build();
     }
 
@@ -78,13 +81,13 @@ public class AuthResource {
         if (!user.isPresent()) {
             return ResponseEntity.notFound().build();
         }
-        if (!user.get().getPassword().equals(pass)) {
+        if (!Objects.equals(user.get().getPassword(), pass)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return ResponseEntity
-                .status(HttpStatus.TEMPORARY_REDIRECT)
-                .location(URI.create("/user/"))
-                .header("Set-Cookie", "user=" + Long.toString(user.get().getId()) + "; Max-Age=63072000; Domain=localhost; HttpOnly; Path=/")
-                .build();
+                .ok()
+                //.header("Set-Cookie", "user=" + Long.toString(user.get().getId()) + "; Max-Age=63072000; Domain=localhost; HttpOnly; Path=/")
+                .headers(getCookie(user.get().getId()))
+                .body(user);
     }
 }

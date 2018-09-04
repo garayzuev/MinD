@@ -2,12 +2,14 @@ package com.horizon.mind.rest.impl;
 
 import com.horizon.mind.dto.Place;
 import com.horizon.mind.rest.RestResource;
+import com.horizon.mind.rest.exception.NotFoundException;
 import com.horizon.mind.service.db.DataBaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
@@ -44,6 +46,11 @@ public class PlaceResource implements RestResource<Place> {
     @ResponseBody
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON_UTF8_VALUE)
     public Place getById(@PathVariable("id") long id) {
-        return service.getPlaceById(id).orElse(null);
+        return service.getPlaceById(id).orElseThrow(NotFoundException::new);
+    }
+
+    @ResponseStatus(value = BAD_REQUEST, reason = "Can't add a user")
+    @ExceptionHandler(IllegalArgumentException.class)
+    private void creatingProblemResolver() {
     }
 }
