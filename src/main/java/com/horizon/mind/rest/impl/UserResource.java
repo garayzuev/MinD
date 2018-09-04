@@ -1,9 +1,9 @@
 package com.horizon.mind.rest.impl;
 
-import com.horizon.mind.db.DataBaseService;
 import com.horizon.mind.dto.Activity;
 import com.horizon.mind.dto.User;
 import com.horizon.mind.rest.RestResource;
+import com.horizon.mind.service.db.DataBaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

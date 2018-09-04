@@ -1,4 +1,4 @@
-package com.horizon.mind.db;
+package com.horizon.mind.service.db;
 
 import com.horizon.mind.dto.Activity;
 import com.horizon.mind.dto.Place;

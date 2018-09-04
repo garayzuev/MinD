@@ -1,9 +1,9 @@
-package com.horizon.mind.db.impl;
+package com.horizon.mind.service.db.impl;
 
-import com.horizon.mind.db.DataBaseService;
 import com.horizon.mind.dto.Activity;
 import com.horizon.mind.dto.Place;
 import com.horizon.mind.dto.User;
+import com.horizon.mind.service.db.DataBaseService;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

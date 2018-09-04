@@ -1,8 +1,8 @@
 package com.horizon.mind.rest.impl;
 
-import com.horizon.mind.db.DataBaseService;
 import com.horizon.mind.dto.Place;
 import com.horizon.mind.rest.RestResource;
+import com.horizon.mind.service.db.DataBaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
