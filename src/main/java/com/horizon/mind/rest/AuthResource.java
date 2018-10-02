@@ -48,29 +48,30 @@ public class AuthResource {
     }
 
     @GetMapping("/login/")
-    public ResponseEntity loginByService(@RequestParam String code, @RequestParam String state) {
-        if (Strings.isBlank(state)) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        IOAuthService authService = servicesByName.get(state);
-        if (authService == null) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        Token token = authService.getToken(code);
-
-        String userId = authService.getUserId(token);
-
-        Optional<User> user = dataBase.getUserByForeignId(userId);
-
-        long id = user.isPresent() ? user.get().getId() : dataBase.addUser(authService.getUserById(token, userId));
+    public ResponseEntity responseFromService(@RequestParam String code, @RequestParam String state) {
+        long id = loginByService(code, state);
 
         return ResponseEntity
                 .status(HttpStatus.TEMPORARY_REDIRECT)
                 .location(URI.create("/user/"))
                 .headers(getCookie(id))
                 .build();
+    }
+
+    private long loginByService(String code, String state) {
+        if (Strings.isBlank(state)) {
+            throw new IllegalArgumentException("State is empty!");
+        }
+
+        IOAuthService authService = servicesByName.get(state);
+        if (authService == null) {
+            throw new IllegalArgumentException("Don't found service by state " + state);
+        }
+
+        Token token = authService.getToken(code);
+        String userId = authService.getUserId(token);
+        Optional<User> user = dataBase.getUserByForeignId(userId);
+        return user.isPresent() ? user.get().getId() : dataBase.addUser(authService.getUserById(token, userId));
     }
 
     @PostMapping("/login/")
