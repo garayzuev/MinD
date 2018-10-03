@@ -2,6 +2,7 @@ package com.horizon.mind.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.beans.ConstructorProperties;
 
@@ -11,6 +12,7 @@ import java.beans.ConstructorProperties;
 @Data
 @Builder(toBuilder = true)
 public class Place {
+    @EqualsAndHashCode.Exclude
     private final Long id;
     private final String name;
     private final byte[] image;

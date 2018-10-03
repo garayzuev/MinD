@@ -16,6 +16,7 @@ import java.util.Set;
 @Data
 @Builder(toBuilder = true)
 public class User {
+    @EqualsAndHashCode.Exclude
     private final Long id;
     private final String foreignId;
     private final String name;

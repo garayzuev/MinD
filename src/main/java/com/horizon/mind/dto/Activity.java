@@ -2,6 +2,7 @@ package com.horizon.mind.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.beans.ConstructorProperties;
 import java.util.HashSet;
@@ -13,9 +14,11 @@ import java.util.Set;
 @Data
 @Builder(toBuilder = true)
 public class Activity {
+    @EqualsAndHashCode.Exclude
     private final Long id;
     private final String name;
     private final byte[] image;
+    @EqualsAndHashCode.Exclude
     private Set<Place> preferredPlaces;
 
     @ConstructorProperties({"id", "name", "image", "preferredPlaces"})

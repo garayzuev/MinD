@@ -1,0 +1,179 @@
+[
+  {
+    "id": "-665306289",
+    "name": "User 1",
+    "surname": "Test",
+    "password": "q12345678",
+    "email": "user1@mail.com",
+    "preferredActivities": [
+      {
+        "name": "Running",
+        "preferredPlaces": [
+          {
+            "name": "Molineux Stadium",
+            "latitude": "52.5902394",
+            "longitude": "-2.1326175"
+          },
+          {
+            "name": "Wolverhampton West Park",
+            "latitude": "52.5895992",
+            "longitude": "-2.1411475"
+          }
+        ]
+      },
+      {
+        "name": "Ice-skating",
+        "preferredPlaces": [
+          {
+            "name": "National Ice Centre",
+            "latitude": "52.9519022",
+            "longitude": "-1.1418847"
+          }
+        ]
+      }
+    ],
+    "friends": [
+    ]
+  },
+  {
+    "id": "-1376639348",
+    "name": "User 2",
+    "surname": "Test",
+    "password": "q12345678",
+    "email": "user2@mail.com",
+    "preferredActivities": [
+      {
+        "name": "History",
+        "preferredPlaces": [
+          {
+            "name": "City of Caves",
+            "latitude": "52.9508902",
+            "longitude": "-1.1485267"
+          },
+          {
+            "name": "National Justice Museum",
+            "latitude": "52.9507932",
+            "longitude": "-1.1463916"
+          }
+        ]
+      },
+      {
+        "name": "Running",
+        "preferredPlaces": [
+          {
+            "name": "Molineux Stadium",
+            "latitude": "52.5902394",
+            "longitude": "-2.1326175"
+          }
+        ]
+      },
+      {
+        "name": "Art",
+        "preferredPlaces": [
+          {
+            "name": "Wolverhampton Art Gallery",
+            "latitude": "52.586750",
+            "longitude": "-2.127000"
+          }
+        ]
+      }
+    ],
+    "friends": [
+      {
+        "id": "-665306289"
+      }
+    ]
+  },
+  {
+    "id": "63365669",
+    "name": "User 3",
+    "surname": "Test",
+    "password": "q12345678",
+    "email": "user3@mail.com",
+    "preferredActivities": [
+      {
+        "name": "History",
+        "preferredPlaces": [
+          {
+            "name": "Bargain Stone",
+            "latitude": "52.586824",
+            "longitude": "-2.127687"
+          }
+        ]
+      },
+      {
+        "name": "Bar",
+        "preferredPlaces": [
+          {
+            "name": "Yates",
+            "latitude": "52.5858695",
+            "longitude": "-2.1292068"
+          }
+        ]
+      },
+      {
+        "name": "Shopping",
+        "preferredPlaces": [
+          {
+            "name": "Mander Centre",
+            "latitude": "52.584863",
+            "longitude": "-2.128174"
+          }
+        ]
+      }
+    ],
+    "friends": [
+      {
+        "id": "-1376639348"
+      }
+    ]
+  },
+  {
+    "id": "-308445628",
+    "name": "User 4",
+    "surname": "Test",
+    "password": "q12345678",
+    "email": "user4@mail.com",
+    "preferredActivities": [
+      {
+        "name": "History",
+        "preferredPlaces": [
+          {
+            "name": "City of Caves",
+            "latitude": "52.9508902",
+            "longitude": "-1.1485267"
+          }
+        ]
+      }
+    ],
+    "friends": [
+      {
+        "id": "63365669"
+      },
+      {
+        "id": "-1376639348"
+      }
+    ]
+  },
+  {
+    "id": "-1187408861",
+    "name": "User 5",
+    "surname": "Test",
+    "password": "q12345678",
+    "email": "user5@mail.com",
+    "preferredActivities": [
+      {
+        "name": "Art",
+        "preferredPlaces": [
+          {
+            "name": "Wolverhampton Art Gallery",
+            "latitude": "52.586750",
+            "longitude": "-2.127000"
+          }
+        ]
+      }
+    ],
+    "friends": [
+    ]
+  }
+]
