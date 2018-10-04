@@ -30,6 +30,7 @@ public class User {
     @ToString.Exclude
     private String password;
     private final Set<Activity> preferredActivities;
+    @EqualsAndHashCode.Exclude
     private byte[] image;
 
 

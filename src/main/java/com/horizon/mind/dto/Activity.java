@@ -17,6 +17,7 @@ public class Activity {
     @EqualsAndHashCode.Exclude
     private final Long id;
     private final String name;
+    @EqualsAndHashCode.Exclude
     private final byte[] image;
     @EqualsAndHashCode.Exclude
     private Set<Place> preferredPlaces;

@@ -15,6 +15,7 @@ public class Place {
     @EqualsAndHashCode.Exclude
     private final Long id;
     private final String name;
+    @EqualsAndHashCode.Exclude
     private final byte[] image;
     private final Double latitude;
     private final Double longitude;
