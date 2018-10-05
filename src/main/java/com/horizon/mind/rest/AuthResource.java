@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.horizon.mind.Helper.getCookie;
+import static com.horizon.mind.Helper.invalidateCookie;
 
 /**
  * Created by garayzuev@gmail.com on 19.06.2018.
@@ -87,8 +88,19 @@ public class AuthResource {
         }
         return ResponseEntity
                 .ok()
-                //.header("Set-Cookie", "user=" + Long.toString(user.get().getId()) + "; Max-Age=63072000; Domain=localhost; HttpOnly; Path=/")
                 .headers(getCookie(user.get().getId()))
+                .body(user);
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity logout(@CookieValue("user") long id) {
+        Optional<User> user = dataBase.getUserById(id);
+        if (!user.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity
+                .ok()
+                .headers(invalidateCookie())
                 .body(user);
     }
 }

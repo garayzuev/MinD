@@ -14,4 +14,10 @@ public class Helper {
         headers.addAll(SET_COOKIE, singletonList("user=" + Long.toString(id) + "; Max-Age=63072000; Domain=localhost; HttpOnly; Path=/"));
         return headers;
     }
+
+    public static HttpHeaders invalidateCookie() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.addAll(SET_COOKIE, singletonList("user=; Max-Age=0; Domain=localhost; HttpOnly; Path=/"));
+        return headers;
+    }
 }
