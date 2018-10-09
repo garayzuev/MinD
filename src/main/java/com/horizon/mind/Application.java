@@ -21,7 +21,7 @@ import java.util.Set;
  */
 @SpringBootApplication(scanBasePackages = "com.horizon.mind")
 public class Application {
-    private static final String PATH_TO_USERS = "data/Users.json";
+    private static final String PATH_TO_USERS = "data/Users_wo_images.json";
 
     public static void main(String[] args) throws IOException {
         ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
@@ -39,9 +39,9 @@ public class Application {
             userBuilder.password(node.get("password").asText());
             Set<Activity> activities = new HashSet<>();
             for (Activity activity : user.getPreferredActivities()) {
-                Optional<Activity> existingActivity = getActivityByName(db, activity.getName());
-                Activity.ActivityBuilder activityBuilder = existingActivity.orElse(activity).toBuilder();
-                Set<Place> places = existingActivity.map(Activity::getPreferredPlaces).orElse(new HashSet<>());
+                //Optional<Activity> existingActivity = getActivityByName(db, activity.getName());
+                Activity.ActivityBuilder activityBuilder = activity.toBuilder();
+                Set<Place> places = new HashSet<>();
                 for (Place place : activity.getPreferredPlaces()) {
                     long id = db.addPlace(place);
                     places.add(db.getPlaceById(id).orElse(null));

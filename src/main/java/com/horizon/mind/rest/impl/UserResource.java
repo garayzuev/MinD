@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 import static com.horizon.mind.Helper.getCookie;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CREATED;
+import static com.horizon.mind.Helper.invalidateCookie;
+import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
 
@@ -44,6 +44,34 @@ public class UserResource implements RestResource<User> {
                 .status(CREATED)
                 .headers(getCookie(usr.getId()))
                 .body(usr);
+    }
+
+    @PutMapping(consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity updateUser(@CookieValue("user") long id, @RequestBody User user) {
+        if (user.getId() != null && id != user.getId()) {
+            return ResponseEntity.status(BAD_REQUEST)
+                    .body("Can't update user information");
+        }
+        User usr = service.getUserById(id).orElseThrow(UserNotFoundException::new);
+
+        usr.setName(user.getName());
+        usr.setSurname(user.getSurname());
+        usr.setEmail(user.getEmail());
+
+        return ResponseEntity
+                .status(OK)
+                .headers(getCookie(usr.getId()))
+                .body(usr);
+    }
+
+    @ResponseBody
+    @DeleteMapping
+    public ResponseEntity removeUser(@CookieValue("user") long id) {
+        User user = service.removeUser(id).orElseThrow(UserNotFoundException::new);
+        return ResponseEntity
+                .status(OK)
+                .headers(invalidateCookie())
+                .body(user);
     }
 
     @Override
@@ -78,6 +106,17 @@ public class UserResource implements RestResource<User> {
     }
 
     @ResponseBody
+    @DeleteMapping(value = "/friends/{friendId}")
+    public User removeFriendRelation(@CookieValue("user") long id, @PathVariable long friendId) {
+        User user = service.getUserById(id).orElseThrow(UserNotFoundException::new);
+        service.getUserById(friendId).ifPresent(u -> {
+            user.getFriends().remove(u);
+            u.getFriends().remove(user);
+        });
+        return user;
+    }
+
+    @ResponseBody
     @GetMapping(value = "/friends", produces = APPLICATION_JSON_UTF8_VALUE)
     public Collection<User> getFriends(@CookieValue("user") long id) {
         return service.getUserById(id).orElseThrow(UserNotFoundException::new).getFriends();
@@ -90,6 +129,25 @@ public class UserResource implements RestResource<User> {
         Optional<Activity> activity = service.getActivityById(activityId);
         activity.ifPresent(a -> user.getPreferredActivities().add(a));
         return user;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/activities")
+    public Optional<Activity> addFavoriteActivity(@CookieValue("user") long id, @RequestBody Activity activity) {
+        User user = service.getUserById(id).orElseThrow(UserNotFoundException::new);
+        long activityId = service.addActivity(activity);
+        Optional<Activity> a = service.getActivityById(activityId);
+        a.ifPresent(ac -> user.getPreferredActivities().add(ac));
+        return a;
+    }
+
+    @ResponseBody
+    @DeleteMapping(value = "/activities/{activityId}")
+    public Optional<Activity> removeFavoriteActivity(@CookieValue("user") long id, @PathVariable long activityId) {
+        User user = service.getUserById(id).orElseThrow(UserNotFoundException::new);
+        Optional<Activity> activity = service.getActivityById(activityId);
+        activity.ifPresent(a -> user.getPreferredActivities().remove(a));
+        return service.removeActivityIfNoLinks(activityId);
     }
 
     @ResponseBody
@@ -117,6 +175,13 @@ public class UserResource implements RestResource<User> {
         }
         user.setPassword(newPass);
         return user;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/email", produces = APPLICATION_JSON_UTF8_VALUE)
+    public Optional<User> getByEmail(@CookieValue("user") long id, @RequestBody String email) {
+        service.getUserById(id).orElseThrow(UserNotFoundException::new);
+        return service.getUserByEmail(email);
     }
 
     @ResponseStatus(value = BAD_REQUEST, reason = "Can't add a user")

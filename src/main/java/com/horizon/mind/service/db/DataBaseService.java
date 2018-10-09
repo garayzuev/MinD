@@ -30,4 +30,14 @@ public interface DataBaseService {
     List<Place> getAllPlaces();
 
     Optional<User> getUserByEmail(String email);
+
+    Optional<Activity> removeActivity(long id);
+
+    Optional<Activity> removeActivityIfNoLinks(long id);
+
+    Optional<Place> removePlace(long id);
+
+    Optional<Place> removePlaceIfNoLinks(long id);
+
+    Optional<User> removeUser(long id);
 }

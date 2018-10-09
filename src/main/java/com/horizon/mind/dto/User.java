@@ -16,20 +16,24 @@ import java.util.Set;
 @Data
 @Builder(toBuilder = true)
 public class User {
-    @EqualsAndHashCode.Exclude
     private final Long id;
     private final String foreignId;
-    private final String name;
-    private final String surname;
-    private String email;
+    @EqualsAndHashCode.Exclude
+    private final Set<Activity> preferredActivities;
+    @EqualsAndHashCode.Exclude
+    private String name;
+    @EqualsAndHashCode.Exclude
+    private String surname;
     @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private final Set<User> friends;
+    @EqualsAndHashCode.Exclude
+    private String email;
     @JsonIgnore
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private String password;
-    private final Set<Activity> preferredActivities;
     @EqualsAndHashCode.Exclude
     private byte[] image;
 

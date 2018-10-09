@@ -12,12 +12,14 @@ import java.beans.ConstructorProperties;
 @Data
 @Builder(toBuilder = true)
 public class Place {
-    @EqualsAndHashCode.Exclude
     private final Long id;
+    @EqualsAndHashCode.Exclude
     private final String name;
     @EqualsAndHashCode.Exclude
     private final byte[] image;
+    @EqualsAndHashCode.Exclude
     private final Double latitude;
+    @EqualsAndHashCode.Exclude
     private final Double longitude;
 
     @ConstructorProperties({"id", "name", "image", "latitude", "longitude"})
