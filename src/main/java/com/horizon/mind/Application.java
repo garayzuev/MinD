@@ -21,7 +21,7 @@ import java.util.Set;
  */
 @SpringBootApplication(scanBasePackages = "com.horizon.mind")
 public class Application {
-    private static final String PATH_TO_USERS = "data/Users_wo_images.json";
+    private static final String PATH_TO_USERS = "data/Users.json";
 
     public static void main(String[] args) throws IOException {
         ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
