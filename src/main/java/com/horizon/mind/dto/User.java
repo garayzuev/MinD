@@ -38,8 +38,8 @@ public class User {
     private byte[] image;
 
 
-    @ConstructorProperties({"id", "foreignId", "name", "surname", "email", "friends", "password", "preferredActivities", "image"})
-    public User(Long id, String foreignId, String name, String surname, String email, Set<User> friends, String password, Set<Activity> preferredActivities, byte[] image) {
+    @ConstructorProperties({"id", "foreignId", "preferredActivities", "name", "surname", "friends", "email", "password", "image"})
+    public User(Long id, String foreignId, Set<Activity> preferredActivities, String name, String surname, Set<User> friends, String email, String password, byte[] image) {
         this.id = id;
         this.foreignId = foreignId;
         this.name = name;
