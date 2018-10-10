@@ -8,7 +8,7 @@ import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.SET_COOKIE;
 
 public class Helper {
-    private static final String COOKIE_TEMPLATE = "user=%s; Max-Age=63072000; Domain=%s; HttpOnly; Secure; Path=/";
+    private static final String COOKIE_TEMPLATE = "user=%s; Max-Age=63072000; Domain=%s; HttpOnly; Path=/";
     private static final String DOMAIN = "localhost";
 
     private Helper() {
