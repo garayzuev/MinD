@@ -49,7 +49,21 @@ public class PlaceResource implements RestResource<Place> {
         return service.getPlaceById(id).orElseThrow(NotFoundException::new);
     }
 
-    @ResponseStatus(value = BAD_REQUEST, reason = "Can't add a user")
+    @ResponseBody
+    @DeleteMapping(value = "/{id}", produces = APPLICATION_JSON_UTF8_VALUE)
+    public Place removeActivity(@PathVariable long id) {
+        return service.removePlace(id).orElseThrow(NotFoundException::new);
+    }
+
+    @ResponseBody
+    @PutMapping(value = "/{id}/image")
+    public Place uploadImage(@PathVariable("id") long id, @RequestBody byte[] image) {
+        Place place = service.getPlaceById(id).orElseThrow(NotFoundException::new);
+        place.setImage(image);
+        return place;
+    }
+
+    @ResponseStatus(value = BAD_REQUEST, reason = "Can't add a place")
     @ExceptionHandler(IllegalArgumentException.class)
     private void creatingProblemResolver() {
     }

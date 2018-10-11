@@ -84,7 +84,15 @@ public class ActivityResource implements RestResource<Activity> {
         return service.removePlaceIfNoLinks(placeId);
     }
 
-    @ResponseStatus(value = BAD_REQUEST, reason = "Can't add a user")
+    @ResponseBody
+    @PutMapping(value = "/{id}/image")
+    public Activity uploadImage(@PathVariable long id, @RequestBody byte[] image) {
+        Activity activity = service.getActivityById(id).orElseThrow(NotFoundException::new);
+        activity.setImage(image);
+        return activity;
+    }
+
+    @ResponseStatus(value = BAD_REQUEST, reason = "Can't add an activity")
     @ExceptionHandler(IllegalArgumentException.class)
     private void creatingProblemResolver() {
     }

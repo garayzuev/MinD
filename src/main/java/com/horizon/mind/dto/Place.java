@@ -16,14 +16,14 @@ public class Place {
     @EqualsAndHashCode.Exclude
     private final String name;
     @EqualsAndHashCode.Exclude
-    private final byte[] image;
-    @EqualsAndHashCode.Exclude
     private final Double latitude;
     @EqualsAndHashCode.Exclude
     private final Double longitude;
+    @EqualsAndHashCode.Exclude
+    private byte[] image;
 
-    @ConstructorProperties({"id", "name", "image", "latitude", "longitude"})
-    public Place(Long id, String name, byte[] image, Double latitude, Double longitude) {
+    @ConstructorProperties({"id", "name", "latitude", "longitude", "image"})
+    public Place(Long id, String name, Double latitude, Double longitude, byte[] image) {
         this.id = id;
         this.name = name;
         this.image = image;
