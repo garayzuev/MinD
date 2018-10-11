@@ -59,19 +59,21 @@ public class ActivityResource implements RestResource<Activity> {
 
     @ResponseBody
     @PutMapping(value = "/{id}/place/{placeId}", produces = APPLICATION_JSON_UTF8_VALUE)
-    public Activity addPlace(@PathVariable long id, @PathVariable long placeId) {
+    public Optional<Place> addPlace(@PathVariable long id, @PathVariable long placeId) {
         Activity activity = service.getActivityById(id).orElseThrow(NotFoundException::new);
-        service.getPlaceById(placeId).ifPresent(p -> activity.getPreferredPlaces().add(p));
-        return activity;
+        Optional<Place> place = service.getPlaceById(placeId);
+        place.ifPresent(p -> activity.getPreferredPlaces().add(p));
+        return place;
     }
 
     @ResponseBody
     @PostMapping(value = "/{id}/place", produces = APPLICATION_JSON_UTF8_VALUE)
-    public Activity addPlace(@PathVariable long id, @RequestBody Place place) {
+    public Optional<Place> addPlace(@PathVariable long id, @RequestBody Place place) {
         Activity activity = service.getActivityById(id).orElseThrow(NotFoundException::new);
         long placeId = service.addPlace(place);
-        service.getPlaceById(placeId).ifPresent(p -> activity.getPreferredPlaces().add(p));
-        return activity;
+        Optional<Place> dbPlace = service.getPlaceById(placeId);
+        dbPlace.ifPresent(p -> activity.getPreferredPlaces().add(p));
+        return dbPlace;
     }
 
     @ResponseBody

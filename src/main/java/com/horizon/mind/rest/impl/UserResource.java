@@ -124,11 +124,11 @@ public class UserResource implements RestResource<User> {
 
     @ResponseBody
     @PutMapping(value = "/activities/{activityId}")
-    public User addFavoriteActivity(@CookieValue("user") long id, @PathVariable long activityId) {
+    public Optional<Activity> addFavoriteActivity(@CookieValue("user") long id, @PathVariable long activityId) {
         User user = service.getUserById(id).orElseThrow(UserNotFoundException::new);
         Optional<Activity> activity = service.getActivityById(activityId);
         activity.ifPresent(a -> user.getPreferredActivities().add(a));
-        return user;
+        return activity;
     }
 
     @ResponseBody
